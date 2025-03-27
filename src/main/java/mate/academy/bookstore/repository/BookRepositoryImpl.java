@@ -19,7 +19,7 @@ public class BookRepositoryImpl implements BookRepository {
     public Book save(Book book) {
         EntityManager entityManager = null;
         EntityTransaction transaction = null;
-        try  {
+        try {
             entityManager = entityManagerFactory.createEntityManager();
             transaction = entityManager.getTransaction();
             transaction.begin();
