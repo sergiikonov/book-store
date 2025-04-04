@@ -1,0 +1,9 @@
+databaseChangeLog:
+    - changeSet:
+        id: 2
+        author: mate.academy
+        changes:
+          - modifyDataType:
+              columnName: is_deleted
+              newDataType: bit
+              tableName: books
