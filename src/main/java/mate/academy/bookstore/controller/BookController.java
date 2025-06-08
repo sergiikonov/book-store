@@ -12,6 +12,7 @@ import mate.academy.bookstore.service.book.BookService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class BookController {
     private final BookService bookService;
 
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @Operation(summary = "Get all books method",
             description = "Get all books")
     @GetMapping
@@ -36,6 +38,7 @@ public class BookController {
         return bookService.findAll(pageable);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @Operation(summary = "Get book by id method",
             description = "Get book by id")
     @GetMapping("/{id}")
@@ -43,6 +46,7 @@ public class BookController {
         return bookService.findById(id);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Create book with params method",
             description = "Create book")
     @PostMapping
@@ -50,6 +54,7 @@ public class BookController {
         return bookService.save(bookDto);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Delete book by id method",
             description = "Delete book by id")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -58,6 +63,7 @@ public class BookController {
         bookService.deleteById(id);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Update method",
             description = "Update book by id")
     @ResponseStatus(HttpStatus.OK)
@@ -66,6 +72,7 @@ public class BookController {
         return bookService.update(bookDto, id);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @Operation(summary = "Search book method",
             description = "Search book with params")
     @GetMapping("/search")

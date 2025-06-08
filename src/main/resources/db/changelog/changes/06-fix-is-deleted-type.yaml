@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: fix-is-deleted-type
+      author: you
+      changes:
+        - modifyDataType:
+            tableName: users
+            columnName: is_deleted
+            newDataType: BIT(1)
