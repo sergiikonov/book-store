@@ -1,8 +1,6 @@
 package mate.academy.bookstore.service.book;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import mate.academy.bookstore.dto.book.BookDto;
 import mate.academy.bookstore.dto.book.BookDtoWithoutCategoryIds;
@@ -11,7 +9,6 @@ import mate.academy.bookstore.dto.book.CreateBookRequestDto;
 import mate.academy.bookstore.exception.EntityNotFoundException;
 import mate.academy.bookstore.mapper.BookMapper;
 import mate.academy.bookstore.model.Book;
-import mate.academy.bookstore.model.Category;
 import mate.academy.bookstore.repository.book.BookRepository;
 import mate.academy.bookstore.repository.book.BookSpecificationBuilder;
 import mate.academy.bookstore.repository.category.CategoryRepository;
@@ -74,11 +71,5 @@ public class BookServiceImpl implements BookService {
     public Page<BookDtoWithoutCategoryIds> getByCategoriesId(Long id, Pageable pageable) {
         return bookRepository.findAllByCategoriesId(id, pageable)
                 .map(bookMapper::toDtoWithoutCategories);
-    }
-
-    private Set<Category> categoriesIdToCategories(List<Long> categories) {
-        return categories.stream()
-                .map(categoryRepository::getReferenceById)
-                .collect(Collectors.toSet());
     }
 }

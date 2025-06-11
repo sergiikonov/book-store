@@ -9,6 +9,6 @@ public class CategoryRequestDto {
     @NotBlank
     @Size(min = 3, max = 65)
     private String name;
-    @Size(min = 3, max = 65)
+    @Size(min = 3)
     private String description;
 }
