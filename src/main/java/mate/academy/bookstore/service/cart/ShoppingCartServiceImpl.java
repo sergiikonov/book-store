@@ -38,10 +38,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 () -> new EntityNotFoundException("Can't find book with id:" + request.getBookId())
         );
 
-        Optional<CartItem> existingItem = shoppingCart.getCartItems()
-                .stream()
-                .filter(item -> item.getBook().getId().equals(book.getId()))
-                .findFirst();
+        Optional<CartItem> existingItem = cartItemRepository
+                .findByShoppingCartAndBook(shoppingCart, book);
 
         if (existingItem.isPresent()) {
             CartItem item = existingItem.get();
