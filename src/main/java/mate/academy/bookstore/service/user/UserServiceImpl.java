@@ -1,5 +1,6 @@
 package mate.academy.bookstore.service.user;
 
+import java.util.HashSet;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import mate.academy.bookstore.dto.user.UserRegistrationRequestDto;
@@ -15,6 +16,7 @@ import mate.academy.bookstore.repository.user.UserRepository;
 import mate.academy.bookstore.service.cart.ShoppingCartService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +28,7 @@ public class UserServiceImpl implements UserService {
     private final ShoppingCartService shoppingCartService;
 
     @Override
+    @Transactional
     public UserResponseDto register(UserRegistrationRequestDto requestDto)
             throws RegistrationException {
         if (userRepository.existsByEmail(requestDto.getEmail())) {
@@ -38,9 +41,9 @@ public class UserServiceImpl implements UserService {
 
         Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
                 .orElseThrow(() -> new EntityNotFoundException("Default role USER not found"));
-        user.setRoles(Set.of(userRole));
+        user.setRoles(new HashSet<>(Set.of(userRole)));
         shoppingCartService.createShoppingCartForUser(user);
-        userRepository.save(user);
-        return userMapper.toUserResponse(user);
+        User savedUser = userRepository.save(user);
+        return userMapper.toUserResponse(savedUser);
     }
 }

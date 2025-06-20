@@ -43,7 +43,8 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto placeOrder(Authentication authentication, CreateOrderRequestDto requestDto) {
         User user = getUser(authentication);
         ShoppingCart shoppingCart = shoppingCartRepository.findByUser(user).orElseThrow(
-                () -> new EntityNotFoundException("Can't find user with id: " + user.getId()));
+                () -> new EntityNotFoundException("Can't find shopping cart with id: "
+                        + user.getId()));
         if (shoppingCart.getCartItems().isEmpty()) {
             throw new OrderProcessingException("Can't process empty order");
         }

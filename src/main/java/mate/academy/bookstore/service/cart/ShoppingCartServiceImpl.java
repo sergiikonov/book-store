@@ -75,11 +75,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public ShoppingCart createShoppingCartForUser(User user) {
+    public void createShoppingCartForUser(User user) {
         ShoppingCart shoppingCart = new ShoppingCart();
         shoppingCart.setUser(user);
-        user.setShoppingCart(shoppingCart);
-        return shoppingCartRepository.save(shoppingCart);
+        shoppingCartRepository.save(shoppingCart);
     }
 
     private ShoppingCart getShoppingCart(Authentication authentication) {
