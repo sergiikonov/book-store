@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new EntityNotFoundException("Default role USER not found"));
         user.setRoles(new HashSet<>(Set.of(userRole)));
         shoppingCartService.createShoppingCartForUser(user);
-        User savedUser = userRepository.save(user);
-        return userMapper.toUserResponse(savedUser);
+        userRepository.save(user);
+        return userMapper.toUserResponse(user);
     }
 }
