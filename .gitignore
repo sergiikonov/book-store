@@ -33,4 +33,5 @@ build/
 .vscode/
 
 ### Custom ###
-db.properties
+.env.env
+.env
