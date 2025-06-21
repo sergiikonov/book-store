@@ -1,6 +1,5 @@
 package mate.academy.bookstore.service.user;
 
-import java.util.HashSet;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import mate.academy.bookstore.dto.user.UserRegistrationRequestDto;
