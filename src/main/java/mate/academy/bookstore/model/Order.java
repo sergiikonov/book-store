@@ -49,4 +49,3 @@ public class Order {
     @Column(nullable = false)
     private boolean isDeleted = false;
 }
-
