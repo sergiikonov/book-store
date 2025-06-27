@@ -1,8 +1,9 @@
 package mate.academy.bookstore.repository;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import mate.academy.bookstore.model.Book;
 import mate.academy.bookstore.repository.book.BookRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class BookRepositoryTests {
         Pageable pageable = PageRequest.of(PAGE_NUMBER, PAGE_SIZE);
         Page<Book> actual = bookRepository.findAllByCategoriesId(CATEGORY_ID, pageable);
 
-        Assertions.assertEquals(1, actual.getTotalElements());
-        Assertions.assertEquals(TITLE, actual.getContent().get(0).getTitle());
+        assertEquals(1, actual.getTotalElements());
+        assertEquals(TITLE, actual.getContent().get(0).getTitle());
     }
 }

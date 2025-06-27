@@ -1,5 +1,10 @@
 package mate.academy.bookstore.controller;
 
+import static mate.academy.bookstore.util.TestUtil.buildBookDto;
+import static mate.academy.bookstore.util.TestUtil.buildCreateBookRequest;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -7,11 +12,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.math.BigDecimal;
 import java.util.List;
 import mate.academy.bookstore.dto.book.BookDto;
 import mate.academy.bookstore.dto.book.CreateBookRequestDto;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -60,7 +63,7 @@ public class BookControllerTests {
         JsonNode content = root.get("content");
 
         BookDto[] actual = objectMapper.readValue(content.toString(), BookDto[].class);
-        Assertions.assertEquals(3, actual.length);
+        assertEquals(3, actual.length);
 
         List<BookDto> expected = List.of(
                 buildBookDto(1L, "Title1", "Author1", "10101011", "Description1", "Cover1"),
@@ -69,11 +72,11 @@ public class BookControllerTests {
         );
 
         for (int i = 0; i < expected.size(); i++) {
-            Assertions.assertEquals(expected.get(i).getTitle(), actual[i].getTitle());
-            Assertions.assertEquals(expected.get(i).getAuthor(), actual[i].getAuthor());
-            Assertions.assertEquals(expected.get(i).getIsbn(), actual[i].getIsbn());
-            Assertions.assertEquals(expected.get(i).getCoverImage(), actual[i].getCoverImage());
-            Assertions.assertEquals(expected.get(i).getDescription(), actual[i].getDescription());
+            assertEquals(expected.get(i).getTitle(), actual[i].getTitle());
+            assertEquals(expected.get(i).getAuthor(), actual[i].getAuthor());
+            assertEquals(expected.get(i).getIsbn(), actual[i].getIsbn());
+            assertEquals(expected.get(i).getCoverImage(), actual[i].getCoverImage());
+            assertEquals(expected.get(i).getDescription(), actual[i].getDescription());
         }
     }
 
@@ -96,10 +99,24 @@ public class BookControllerTests {
         BookDto expected = buildBookDto(
                 1L, "Title", "Author", "1010101", "Description", "Cover"
         );
-        Assertions.assertTrue(
+        assertTrue(
                 EqualsBuilder.reflectionEquals(expected, actual, "categoryIds"),
                 "Expected and actual BookDto are not equal"
         );
+    }
+
+    @WithMockUser(username = "user", roles = "USER")
+    @Test
+    @DisplayName("Should throw 404 status for invalid ID")
+    @Sql(scripts = "classpath:database/books/add-one-book.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:database/cleanup-test-data.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getBookById_whenInvalidId_shouldReturnNotFoundStatus() throws Exception {
+        mockMvc.perform(get("/books/995")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andReturn();
     }
 
     @WithMockUser(username = "admin", roles = "ADMIN")
@@ -119,37 +136,29 @@ public class BookControllerTests {
                 .getResponse()
                 .getContentAsString(), BookDto.class);
         BookDto expected = buildBookDto(
-                1L, "Title", "Author", "101010", "Description", "Cover"
+                1L, "Title", "Author", "01010101", "Description", "Some image"
         );
-        Assertions.assertNotNull(actual.getId());
-        Assertions.assertTrue(
+        assertNotNull(actual.getId());
+        assertTrue(
                 EqualsBuilder.reflectionEquals(expected, actual, "categoryIds", "id"),
                 "Expected and actual BookDto are not equal"
         );
     }
 
-    private BookDto buildBookDto(Long id, String title, String author,
-                                 String isbn, String description, String cover) {
-        BookDto bookDto = new BookDto();
-        bookDto.setId(id);
-        bookDto.setTitle(title);
-        bookDto.setAuthor(author);
-        bookDto.setIsbn(isbn);
-        bookDto.setPrice(BigDecimal.TEN);
-        bookDto.setCoverImage(cover);
-        bookDto.setDescription(description);
-        return bookDto;
-    }
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    @Test
+    @DisplayName("Should return 400 status when title is missing")
+    @Sql(scripts = "classpath:database/cleanup-test-data.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void createBook_whenTitleIsMissing_shouldReturnBadRequest() throws Exception {
+        CreateBookRequestDto request = buildCreateBookRequest();
+        request.setTitle(null);
 
-    private CreateBookRequestDto buildCreateBookRequest() {
-        CreateBookRequestDto createBookRequestDto = new CreateBookRequestDto();
-        createBookRequestDto.setCategoryIds(List.of(1L));
-        createBookRequestDto.setTitle("Title");
-        createBookRequestDto.setAuthor("Author");
-        createBookRequestDto.setPrice(BigDecimal.TEN);
-        createBookRequestDto.setIsbn("101010");
-        createBookRequestDto.setDescription("Description");
-        createBookRequestDto.setCoverImage("Cover");
-        return createBookRequestDto;
+        String jsonRequest = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(post("/books")
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 }

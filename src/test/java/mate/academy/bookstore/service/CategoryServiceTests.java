@@ -1,5 +1,11 @@
 package mate.academy.bookstore.service;
 
+import static mate.academy.bookstore.util.TestUtil.buildValidCategory;
+import static mate.academy.bookstore.util.TestUtil.buildValidCategoryDto;
+import static mate.academy.bookstore.util.TestUtil.buildValidCategoryRequestDto;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.List;
 import java.util.Optional;
 import mate.academy.bookstore.dto.category.CategoryDto;
@@ -9,7 +15,6 @@ import mate.academy.bookstore.mapper.CategoryMapper;
 import mate.academy.bookstore.model.Category;
 import mate.academy.bookstore.repository.category.CategoryRepository;
 import mate.academy.bookstore.service.category.CategoryServiceImpl;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,8 +30,6 @@ import org.springframework.data.domain.Pageable;
 @ExtendWith(MockitoExtension.class)
 public class CategoryServiceTests {
     private static final Long ID = 1L;
-    private static final String NAME = "Name";
-    private static final String DESCRIPTION = "Description";
 
     @Mock
     private CategoryRepository categoryRepository;
@@ -48,8 +51,8 @@ public class CategoryServiceTests {
         Mockito.when(categoryMapper.toDto(category)).thenReturn(categoryDto);
         Page<CategoryDto> actual = categoryService.findAll(pageable);
 
-        Assertions.assertEquals(1, actual.getTotalElements());
-        Assertions.assertEquals(categoryDto, actual.getContent().get(0));
+        assertEquals(1, actual.getTotalElements());
+        assertEquals(categoryDto, actual.getContent().get(0));
         Mockito.verify(categoryRepository).findAll(pageable);
         Mockito.verify(categoryMapper).toDto(category);
     }
@@ -63,7 +66,7 @@ public class CategoryServiceTests {
         Mockito.when(categoryRepository.findById(ID)).thenReturn(Optional.of(category));
         Mockito.when(categoryMapper.toDto(category)).thenReturn(categoryDto);
         CategoryDto actual = categoryService.getById(ID);
-        Assertions.assertEquals(actual, categoryDto);
+        assertEquals(actual, categoryDto);
 
         Mockito.verify(categoryRepository).findById(ID);
         Mockito.verify(categoryMapper).toDto(category);
@@ -75,7 +78,7 @@ public class CategoryServiceTests {
         Long id = 995L;
         Mockito.when(categoryRepository.findById(id)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(
+        assertThrows(
                 EntityNotFoundException.class, () -> categoryService.getById(id));
     }
 
@@ -92,7 +95,7 @@ public class CategoryServiceTests {
         Mockito.when(categoryMapper.toDto(category)).thenReturn(categoryDto);
 
         CategoryDto actual = categoryService.update(ID, requestDto);
-        Assertions.assertEquals(categoryDto, actual);
+        assertEquals(categoryDto, actual);
 
         Mockito.verify(categoryRepository).findById(ID);
         Mockito.verify(categoryMapper).updateCategoryFromDto(requestDto, category);
@@ -105,32 +108,9 @@ public class CategoryServiceTests {
     public void update_nonExistingCategory_shouldThrowEntityNotFoundException() {
         Long id = 995L;
         Mockito.when(categoryRepository.findById(id)).thenReturn(Optional.empty());
-        Assertions.assertThrows(
+        assertThrows(
                 EntityNotFoundException.class,
                 () -> categoryService.update(id, new CategoryRequestDto())
         );
-    }
-
-    private Category buildValidCategory() {
-        Category category = new Category();
-        category.setDescription(DESCRIPTION);
-        category.setName(NAME);
-        category.setId(ID);
-        return category;
-    }
-
-    private CategoryDto buildValidCategoryDto() {
-        CategoryDto categoryDto = new CategoryDto();
-        categoryDto.setDescription(DESCRIPTION);
-        categoryDto.setName(NAME);
-        categoryDto.setId(ID);
-        return categoryDto;
-    }
-
-    private CategoryRequestDto buildValidCategoryRequestDto() {
-        CategoryRequestDto requestDto = new CategoryRequestDto();
-        requestDto.setDescription(DESCRIPTION);
-        requestDto.setName(NAME);
-        return requestDto;
     }
 }
