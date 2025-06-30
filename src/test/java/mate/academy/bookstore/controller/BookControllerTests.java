@@ -72,11 +72,10 @@ public class BookControllerTests {
         );
 
         for (int i = 0; i < expected.size(); i++) {
-            assertEquals(expected.get(i).getTitle(), actual[i].getTitle());
-            assertEquals(expected.get(i).getAuthor(), actual[i].getAuthor());
-            assertEquals(expected.get(i).getIsbn(), actual[i].getIsbn());
-            assertEquals(expected.get(i).getCoverImage(), actual[i].getCoverImage());
-            assertEquals(expected.get(i).getDescription(), actual[i].getDescription());
+            assertTrue(
+                    EqualsBuilder.reflectionEquals(expected.get(i), actual[i], "categoryIds", "id"),
+                    "Book at index " + i + " does not match"
+            );
         }
     }
 
