@@ -1,9 +1,14 @@
 package mate.academy.bookstore.util;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import mate.academy.bookstore.dto.book.BookDto;
 import mate.academy.bookstore.dto.book.CreateBookRequestDto;
+import mate.academy.bookstore.dto.cart.AddToCartRequestDto;
+import mate.academy.bookstore.dto.cart.CartItemDto;
+import mate.academy.bookstore.dto.cart.ShoppingCartDto;
 import mate.academy.bookstore.dto.category.CategoryDto;
 import mate.academy.bookstore.dto.category.CategoryRequestDto;
 import mate.academy.bookstore.model.Book;
@@ -17,6 +22,8 @@ public class TestUtil {
     public static final String COVER_IMAGE = "Some image";
     public static final String NAME = "Name";
     public static final String DESCRIPTION = "Description";
+    public static final int QUANTITY = 10;
+    public static final Long USER_ID = 999L;
 
     public static BookDto buildBookDto(Long id, String title, String author,
                                  String isbn, String description, String cover) {
@@ -110,6 +117,48 @@ public class TestUtil {
         CategoryRequestDto requestDto = new CategoryRequestDto();
         requestDto.setDescription(DESCRIPTION);
         requestDto.setName(NAME);
+        return requestDto;
+    }
+
+    public static CartItemDto buildCartItemDto() {
+        return new CartItemDto(ID, ID, TITLE, QUANTITY);
+    }
+
+    public static ShoppingCartDto buildShoppingCartDto(CartItemDto cartItem) {
+        return new ShoppingCartDto(ID, ID, Set.of(cartItem));
+    }
+
+    public static Book buildBook() {
+        Book book = new Book();
+        book.setId(ID);
+        return book;
+    }
+
+    public static AddToCartRequestDto buildCartRequestDto(Long bookId) {
+        AddToCartRequestDto addToCartRequestDto = new AddToCartRequestDto();
+        addToCartRequestDto.setBookId(bookId);
+        addToCartRequestDto.setQuantity(QUANTITY);
+        return addToCartRequestDto;
+    }
+
+    public static ShoppingCartDto buildValidCartDto() {
+        return new ShoppingCartDto(
+                USER_ID, USER_ID, new HashSet<>()
+        );
+    }
+
+    public static ShoppingCartDto buildValidCartDtoWithBook() {
+        CartItemDto cartItem = new CartItemDto(ID, ID, TITLE, QUANTITY);
+        Set<CartItemDto> items = new HashSet<>();
+        items.add(cartItem);
+
+        return new ShoppingCartDto(ID, USER_ID, items);
+    }
+
+    public static AddToCartRequestDto buildValidCartRequestDto() {
+        AddToCartRequestDto requestDto = new AddToCartRequestDto();
+        requestDto.setBookId(ID);
+        requestDto.setQuantity(QUANTITY);
         return requestDto;
     }
 }
