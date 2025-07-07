@@ -22,6 +22,7 @@ services:
     depends_on:
       mysqldb:
         condition: service_healthy
+    platform: linux/arm64
     restart: on-failure
     image: bookstore-service
     build: .
