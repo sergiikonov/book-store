@@ -82,9 +82,9 @@ http://localhost:8088/swagger-ui/index.html#/
 
 ## 🌐 Production Version
 #### You can also access the live version of the Bookstore API hosted on AWS:
-```sh
-http://ec2-16-171-58-223.eu-north-1.compute.amazonaws.com/swagger-ui/index.html#/
-```
+
+### [Bookstore API](http://ec2-16-171-58-223.eu-north-1.compute.amazonaws.com/swagger-ui/index.html#/)
+
 ## 📭 Postman Collection
 ### I’ve also included a Postman collection for testing the API. Use this to quickly test the various endpoints:
 
